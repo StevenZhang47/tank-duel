@@ -74,14 +74,15 @@ if __name__ == "__main__":
     green_obs = observe(game, 0)
     red_obs = observe(game, 1)
 
-    print("Green observation:", green_obs)
-    print("Red observation:", red_obs)
+    print("Green sees:", bullet_features(bullet, 0))
+    print("Red sees:", bullet_features(bullet, 1))
     print("Length:", len(green_obs))
     
     bullet = Bullet(
-    position=(450, 300),
-    velocity=(420, 0),
-    owner=0,
+        position=(450, 300),
+        velocity=(420, 0),
+        owner=0,
+        bounces=0,
     )
 
     print("Bullet features:", bullet_features(bullet))

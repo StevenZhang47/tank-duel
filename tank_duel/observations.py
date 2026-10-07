@@ -33,9 +33,14 @@ def observe(game, player_index):
     # Join the two lists into one flat list.
     return my_features + opponent_features
 
-def bullet_features(bullet):
+def bullet_features(bullet, player_index):
     x, y = bullet.position
     vx, vy = bullet.velocity
+    
+    if bullet.owner == player_index:
+        is_mine = 1.0
+    else:
+        is_mine = 0.0
 
     # Normalize x using WIDTH.
     x = x/WIDTH
@@ -45,4 +50,4 @@ def bullet_features(bullet):
     vx = vx/BULLET_SPEED
     vy = vy/BULLET_SPEED
     # Return those four values as a flat list.
-    return [x, y, vx, vy]
+    return [x, y, vx, vy, is_mine, float(bullet.bounces)]

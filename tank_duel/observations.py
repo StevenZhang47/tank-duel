@@ -1,5 +1,5 @@
 from math import cos, sin
-from tank_duel.simulation import WIDTH, HEIGHT, COOLDOWN
+from tank_duel.simulation import WIDTH, HEIGHT, COOLDOWN, BULLET_SPEED
 
 
 def tank_features(game, player_index):
@@ -32,3 +32,17 @@ def observe(game, player_index):
 
     # Join the two lists into one flat list.
     return my_features + opponent_features
+
+def bullet_features(bullet):
+    x, y = bullet.position
+    vx, vy = bullet.velocity
+
+    # Normalize x using WIDTH.
+    x = x/WIDTH
+    # Normalize y using HEIGHT.
+    y = y/HEIGHT
+    # Normalize vx and vy using BULLET_SPEED.
+    vx = vx/BULLET_SPEED
+    vy = vy/BULLET_SPEED
+    # Return those four values as a flat list.
+    return [x, y, vx, vy]

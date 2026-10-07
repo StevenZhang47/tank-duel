@@ -3,6 +3,9 @@ from tank_duel import Action, Game, DT
 
 from tank_duel.observations import tank_features, observe
 
+from tank_duel.simulation import Bullet
+from tank_duel.observations import bullet_features
+
 rng = random.Random(0)
 
 def random_action(rng: random.Random) -> Action:
@@ -74,3 +77,11 @@ if __name__ == "__main__":
     print("Green observation:", green_obs)
     print("Red observation:", red_obs)
     print("Length:", len(green_obs))
+    
+    bullet = Bullet(
+    position=(450, 300),
+    velocity=(420, 0),
+    owner=0,
+    )
+
+    print("Bullet features:", bullet_features(bullet))

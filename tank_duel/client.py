@@ -21,8 +21,14 @@ def keyboard_actions(keys):
 
 
 class Renderer:
-    def __init__(self, screen):
+    def __init__(self, screen, *, controls=None, footer=None, outcome_hint=None):
         self.screen = screen
+        self.controls = controls or (
+            'Green: W/S move · A/D turn · Space fire',
+            'Red: Arrows move/turn · Enter fire',
+        )
+        self.footer = footer or 'R  Restart round     Esc  Quit'
+        self.outcome_hint = outcome_hint or 'Press R to play again'
         self.font = pygame.font.SysFont('Helvetica', 18)
         self.title = pygame.font.SysFont('Helvetica', 29, bold=True)
         # Render at 2x resolution for clean tank silhouettes and round bullets.
@@ -31,13 +37,13 @@ class Renderer:
     def text(self, value, position, color=INK, large=False):
         self.screen.blit((self.title if large else self.font).render(value, True, color), position)
 
-    def draw(self, game):
+    def draw(self, game, *, status=None):
         self.screen.fill((249, 249, 250))
         self.text('TANK DUEL', (30, 18), large=True)
         self.text(f'GREEN  {game.scores[0]}', (645, 25), GREEN)
         self.text(f'RED  {game.scores[1]}', (810, 25), RED)
-        self.text('Green: W/S move · A/D turn · Space fire', (30, 63), GREEN)
-        self.text('Red: Arrows move/turn · Enter fire', (535, 63), RED)
+        self.text(self.controls[0], (30, 63), GREEN)
+        self.text(self.controls[1], (535, 63), RED)
         self.arena.fill(BACKGROUND)
         for wall in game.walls:
             pygame.draw.rect(self.arena, (12, 12, 13), pygame.Rect(round(wall.x * 2), round(wall.y * 2), round(wall.w * 2), round(wall.h * 2)))
@@ -65,15 +71,15 @@ class Renderer:
             pygame.draw.circle(self.arena, (0, 0, 0), (round(bullet.position[0] * 2), round(bullet.position[1] * 2)), 8)
         self.screen.blit(pygame.transform.smoothscale(self.arena, (WIDTH, HEIGHT)), OFFSET)
         pygame.draw.rect(self.screen, INK, (*OFFSET, WIDTH, HEIGHT), 6)
-        self.text('R  Restart round     Esc  Quit', (30, HEIGHT + 122))
-        if game.finished:
+        self.text(self.footer, (30, HEIGHT + 122))
+        if game.finished or status is not None:
             overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
             overlay.fill((245, 245, 245, 145))
             self.screen.blit(overlay, OFFSET)
-            message = 'DRAW' if game.winner is None else ('GREEN WINS' if game.winner == 0 else 'RED WINS')
+            message = status if status is not None else ('DRAW' if game.winner is None else ('GREEN WINS' if game.winner == 0 else 'RED WINS'))
             label = self.title.render(message, True, INK)
             self.screen.blit(label, label.get_rect(center=(WINDOW[0] // 2, 360)))
-            label = self.font.render('Press R to play again', True, INK)
+            label = self.font.render(self.outcome_hint, True, INK)
             self.screen.blit(label, label.get_rect(center=(WINDOW[0] // 2, 400)))
         pygame.display.flip()
 

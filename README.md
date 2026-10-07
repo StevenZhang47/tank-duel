@@ -49,11 +49,41 @@ The fixed arena has a light gray floor, thick black walls, green/red tanks with 
 
 ## Code structure
 
+### Watch an automated random tank
+
+From the repository root, watch green take random actions against an idle red tank:
+
+```sh
+/Users/stevenzhang/miniforge3/envs/tank-rl/bin/python -m tank_duel.random_rollout --visualize --seed 1
+```
+
+For slow motion, add `--speed 0.25`. Actions are held for 12 physics ticks;
+playback speed changes only the display pacing. The final win/loss/draw or
+`TIME LIMIT` screen stays visible until Escape or closing the window. This
+viewer shows automated play; movement keys do not control the tanks.
+
+For a fast headless run, omit `--visualize`:
+
+```sh
+/Users/stevenzhang/miniforge3/envs/tank-rl/bin/python -m tank_duel.random_rollout --seed 1 --max-ticks 1200
+```
+
+The same seed and tick budget produce the same game with or without the viewer.
+Closing the window early is reported as `interrupted=True`, separately from
+a game ending or timeout. To play with two humans, use `python -m tank_duel`.
+
+### Modules
+
 - `tank_duel/simulation.py`: actions, tanks, bullets, fixed maze, round state, scores, movement, firing, and hit resolution.
 - `tank_duel/physics.py`: continuous circle sweeps against circles and rectangle faces/rounded corners.
 - `tank_duel/client.py`: keyboard mapping, Pygame drawing, and the fixed-step accumulator.
 - `tank_duel/__main__.py`: entry point for `python -m tank_duel`.
 - `tests/test_simulation.py`: headless regression tests using the standard library.
+- `tank_duel/random_rollout.py`: random actions, action holding, episode summaries, and rollout command-line options.
+- `tank_duel/rollout_viewer.py`: optional Pygame display and playback pacing.
+- `tank_duel/observations.py`: numerical tank, bullet, and wall features.
+- `tank_duel/episodes.py`: episode ending flags and terminal rewards.
+- `tests/test_rollout.py`: rollout budgets, visual/headless equivalence, and window shutdown checks.
 
 The simulation advances at 120 Hz. Swept collision detection checks the full travel path, so even bullets moving much farther than a wall's thickness in one tick cannot tunnel. Remaining bullet travel continues after its first reflection during the same tick. Simultaneous orthogonal wall contacts reflect both velocity components and count as one impact. Tiny contact separation offsets prevent repeated numerical collisions. Tanks slide along walls and use a circular hull of radius 16; the decorative barrel does not collide. Tank movement is resolved in player order, then bullets are swept against the resulting tank positions. This is a fixed-step approximation of moving targets, rather than continuous relative-motion collision detection.
 

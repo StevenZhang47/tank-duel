@@ -4,7 +4,7 @@ from tank_duel import Action, Game, DT
 from tank_duel.observations import tank_features, observe
 
 from tank_duel.simulation import Bullet
-from tank_duel.observations import bullet_features
+from tank_duel.observations import all_bullet_features
 
 rng = random.Random(0)
 
@@ -74,8 +74,6 @@ if __name__ == "__main__":
     green_obs = observe(game, 0)
     red_obs = observe(game, 1)
 
-    print("Green sees:", bullet_features(bullet, 0))
-    print("Red sees:", bullet_features(bullet, 1))
     print("Length:", len(green_obs))
     
     bullet = Bullet(
@@ -84,5 +82,9 @@ if __name__ == "__main__":
         owner=0,
         bounces=0,
     )
+    
+    game.bullets.append(Bullet((450, 300), (420, 0), owner=0))
+    obs = observe(game, 0)
 
-    print("Bullet features:", bullet_features(bullet))
+    print("Length:", len(obs))
+    print("First bullet slot:", obs[10:17])

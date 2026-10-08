@@ -26,6 +26,8 @@ class TankDuelEnv(gym.Env):
         self.max_ticks = 1200
         self.action_ticks = 12
         self.needs_reset = True
+        # Optional viewer hook; training and headless evaluation leave this unset.
+        self.on_tick = None
 
     def reset(self, *, seed=None, options=None):
         super().reset(seed=seed)
@@ -53,7 +55,7 @@ class TankDuelEnv(gym.Env):
         # Apply it for up to 12 physics ticks.
         remaining = self.max_ticks - self.game.ticks
         ticks_to_hold = min(self.action_ticks, remaining)
-        hold_action(self.game, green_action, ticks_to_hold)
+        hold_action(self.game, green_action, ticks_to_hold, on_tick=self.on_tick)
         # Return the new observation, reward, ending flags, and info.
         observation = np.array(observe(self.game, 0), dtype=np.float32)
         reward = terminal_reward(self.game, 0)

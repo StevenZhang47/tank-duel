@@ -72,6 +72,17 @@ The same seed and tick budget produce the same game with or without the viewer.
 Closing the window early is reported as `interrupted=True`, separately from
 a game ending or timeout. To play with two humans, use `python -m tank_duel`.
 
+To watch the exact random episode measured through the Gymnasium environment:
+
+```sh
+/Users/stevenzhang/miniforge3/envs/tank-rl/bin/python -m tank_duel.evaluate_random --visualize --seed 10000 --speed 0.25
+```
+
+This uses the evaluator's seeded action-ID sampler. Omitting `--visualize`
+returns the same result immediately; seed `10000` currently loses at tick 56.
+An early window close is reported as an `interrupted` outcome and should not
+be counted as a win, loss, draw, or timeout.
+
 ### Modules
 
 - `tank_duel/simulation.py`: actions, tanks, bullets, fixed maze, round state, scores, movement, firing, and hit resolution.
